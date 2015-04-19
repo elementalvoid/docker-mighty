@@ -24,6 +24,7 @@ RUN sed -i -e 's/main$/main contrib non-free/' /etc/apt/sources.list && \
 
 WORKDIR /root
 ENV IN_CONTAINER=true
+ENV SSH_AUTH_SOCK /ssh-auth-sock
 
 RUN curl -sL git.io/evoid-install > /tmp/evoid-install.sh && \
     bash /tmp/evoid-install.sh
