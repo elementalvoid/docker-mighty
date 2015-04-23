@@ -1,0 +1,44 @@
+#!/bin/bash
+
+DOCKER=$(command -pv docker)
+if [[ -z ${DOCKER} ]]; then
+  echo "Docker not found..."
+  exit 1
+fi
+
+while getopts ho:k opt; do
+  case ${opt} in
+    h) help=true;;
+    o) extra_opts=${OPTARG};;
+    k) remove=false;;
+  esac
+done
+shift $(( OPTIND - 1 ))
+
+if [[ -n ${help} ]]; then
+  cat <<-EOF
+	Usage: $(basename ${0}) [options] [ -- container_command]
+	Options:
+	  -h : Print this help and exit
+	  -o : Extra 'docker run' options (see: docker run --help)
+	  -k : Don't remove the container after exit (default: false)
+
+	Changing the default container command (/bin/bash)
+	  $(basename ${0}) -- echo "Hello World!"
+	EOF
+  exit 0
+fi
+
+DOCKER_RM='--rm'
+if [[ ${remove} == false ]]; then
+  DOCKER_RM=''
+fi
+
+docker run -it ${DOCKER_RM} -v ${SSH_AUTH_SOCK}:/ssh-auth-sock --name mighty \
+  ${extra_opts} \
+  elementalvoid/mighty ${@}
+
+if [[ ${remove:-true} == true ]]; then
+  # make sure it's actually removed as sometimes `docker run --rm` doesn't remove it
+  docker rm -f mighty &> /dev/null
+fi
