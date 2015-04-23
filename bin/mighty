@@ -6,9 +6,10 @@ if [[ -z ${DOCKER} ]]; then
   exit 1
 fi
 
-while getopts ho:k opt; do
+while getopts ho:kp opt; do
   case ${opt} in
     h) help=true;;
+    p) pull=true;;
     o) extra_opts=${OPTARG};;
     k) remove=false;;
   esac
@@ -20,6 +21,7 @@ if [[ -n ${help} ]]; then
 	Usage: $(basename ${0}) [options] [ -- container_command]
 	Options:
 	  -h : Print this help and exit
+	  -p : Pull a new version of mighty from the Docker Hub
 	  -o : Extra 'docker run' options (see: docker run --help)
 	  -k : Don't remove the container after exit (default: false)
 
@@ -27,6 +29,10 @@ if [[ -n ${help} ]]; then
 	  $(basename ${0}) -- echo "Hello World!"
 	EOF
   exit 0
+fi
+
+if [[ ${pull:-false} == true ]]; then
+  docker pull elementalvoid/mighty
 fi
 
 DOCKER_RM='--rm'
