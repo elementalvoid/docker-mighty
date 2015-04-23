@@ -14,9 +14,11 @@ RUN sed -i -e 's/main$/main contrib non-free/' /etc/apt/sources.list && \
       unzip \
       wget && \
     apt-get install -y \
+      build-essential \
       git \
       python \
       python-setuptools \
+      tmux \
       ruby \
       vim-nox && \
     easy_install pip && \
